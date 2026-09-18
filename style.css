@@ -1,0 +1,566 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Georgia', serif; /* Un toque elegante */
+}
+
+body {
+    /* Fondo animado estilo romántico/Kurumi/Burton */
+    background: linear-gradient(135deg, #14081c, #2a1124, #1a1a24, #0d1b2a);
+    background-size: 400% 400%;
+    animation: gradienteFondo 15s ease infinite;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* --- MEJORAS VISUALES: FONDO, BIENVENIDA Y NUEVO BRILLITO --- */
+
+/* Estrellas/Partículas mágicas de fondo */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #ffd700, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 40px, #ff66b2, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0));
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    animation: estrellasFlotantes 20s linear infinite;
+    opacity: 0.4;
+    z-index: -1;
+}
+
+@keyframes estrellasFlotantes {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-200px); }
+}
+
+@keyframes gradienteFondo {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Pantallas */
+.pantalla-activa {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease;
+}
+
+.oculto {
+    display: none !important;
+    opacity: 0;
+}
+
+/* Diseño de la tarjeta */
+.tarjeta-invitacion {
+    background: linear-gradient(145deg, #2a2a35, #1f1f2a);
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    border: 1px solid #3d3d4e;
+}
+
+.tarjeta-invitacion h1 {
+    font-size: 24px;
+    color: #ffd700; /* Dorado cálido */
+    margin-bottom: 15px;
+}
+
+.tarjeta-invitacion p {
+    font-size: 16px;
+    color: #d1d1e0;
+    margin-bottom: 25px;
+}
+
+/* Input de la contraseña */
+.input-container input {
+    width: 100%;
+    padding: 15px;
+    font-size: 22px;
+    text-align: center;
+    letter-spacing: 2px;
+    border: 2px solid #55556b;
+    border-radius: 10px;
+    background-color: #14141c;
+    color: #ffd700;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.input-container input:focus {
+    border-color: #ffd700;
+}
+
+.pista {
+    margin-top: 15px;
+    font-size: 13px !important;
+    color: #888 !important;
+    font-style: italic;
+}
+
+/* --- ESTILOS DE LA FASE 2: GALERÍA --- */
+.galeria-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
+    padding: 20px;
+    justify-content: center;
+}
+
+#media-container {
+    width: 100%;
+    height: 50vh; /* Ocupa la mitad de la pantalla */
+    background-color: #0f0f15;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    border: 2px solid #3d3d4e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#media-container img, #media-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la foto llene el espacio sin deformarse */
+    transition: opacity 0.5s ease;
+}
+
+/* Flechas internas para el carrusel */
+.btn-carrusel {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    z-index: 10;
+    cursor: pointer;
+}
+.btn-carrusel.izq { left: 10px; }
+.btn-carrusel.der { right: 10px; }
+
+.texto-container {
+    width: 100%;
+    min-height: 120px;
+    background: linear-gradient(145deg, #2a2a35, #1f1f2a);
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #3d3d4e;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+#texto-narrativo {
+    font-size: 16px;
+    color: #e0e0eb;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.controles {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-nav {
+    padding: 12px 25px;
+    background-color: #ffd700;
+    color: #1a1a24;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+.btn-nav:active { transform: scale(0.95); }
+.btn-nav.oculto { visibility: hidden; }
+
+
+/* --- ESTILOS FASE 3: ROCOLA DE VINILO --- */
+.rocola {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    /* Textura de surcos de vinilo */
+    background: repeating-radial-gradient(
+        #111,
+        #111 2px,
+        #222 3px,
+        #222 4px
+    );
+    border: 2px solid #3d3d4e;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+/* El sticker central del disco (puedes cambiar el color) */
+.centro-disco {
+    width: 18px;
+    height: 18px;
+    background: #ff66b2; /* Tono Kurumi/Romántico */
+    border-radius: 50%;
+    border: 3px solid #111; /* El agujero del disco */
+}
+
+/* Un pequeño brillo para darle efecto 3D al vinilo */
+.brillo-disco {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.1) 100%);
+    pointer-events: none;
+}
+
+/* Animación de girar cuando está activa */
+.rocola.activa {
+    animation: girarVinilo 3s linear infinite;
+}
+
+@keyframes girarVinilo {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Pantalla de Bienvenida */
+.mensaje-bienvenida {
+    background: rgba(31, 31, 42, 0.85);
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid #ff66b2; /* Toque fucsia sutil */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    max-width: 90%;
+    backdrop-filter: blur(5px);
+}
+
+.mensaje-bienvenida h2 {
+    color: #ffd700;
+    margin-bottom: 20px;
+}
+
+.mensaje-bienvenida p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.nota-audio {
+    font-size: 14px !important;
+    color: #ff99cc !important;
+    font-style: italic;
+    margin-bottom: 30px !important;
+}
+
+/* --- EASTER EGGS --- */
+
+/* NUEVO BRILLITO (Más misterioso y elegante) */
+.brillito {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border-radius: 50%;
+    /* Un resplandor difuminado, sin bordes duros */
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.5), 0 0 30px 10px rgba(255, 102, 178, 0.3);
+    animation: latidoMisterioso 2s infinite ease-in-out;
+    cursor: pointer;
+    z-index: 20;
+}
+
+/* El núcleo del brillo */
+.brillito::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #fff;
+}
+
+@keyframes latidoMisterioso {
+    0%, 100% { transform: scale(0.8); opacity: 0.4; }
+    50% { transform: scale(1.2); opacity: 1; }
+}
+
+/* --- ESTILOS DEL SOBRE (EASTER EGG 2) --- */
+.sobre-misterioso {
+    position: absolute;
+    width: 30px;  /* Reducido (antes 45px) */
+    height: 30px; /* Reducido (antes 45px) */
+    cursor: pointer;
+    z-index: 20;
+    /* Brillo mucho más sutil y pegado al borde */
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4));
+    animation: flotarSobre 3s ease-in-out infinite;
+    transition: transform 0.2s ease;
+}
+
+.sobre-misterioso:hover {
+    transform: scale(1.1) translateY(-5px);
+    /* El brillo al pasar el dedo también es más suave */
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6)); 
+}
+
+@keyframes flotarSobre {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); } 
+}
+
+/* Modal del Poema */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+.modal:not(.oculto) {
+    opacity: 1;
+}
+.contenido-poema {
+    background: #1f1f2a;
+    padding: 30px;
+    border-radius: 15px;
+    border: 2px solid #ff66b2; /* Toque fucsia/Kurumi */
+    text-align: center;
+    max-width: 85%;
+    box-shadow: 0 10px 30px rgba(255, 102, 178, 0.3);
+}
+.contenido-poema h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+.contenido-poema p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    white-space: pre-wrap; /* Respeta los saltos de línea de tu poema */
+}
+#btn-cerrar-poema {
+    padding: 10px 20px;
+    background: #ff66b2;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer; /* Añadido para mejor usabilidad */
+}
+
+/* --- EFECTO KARAOKE PARA EL POEMA --- */
+.linea-poema {
+    color: #888; /* Color apagado por defecto */
+    font-size: 16px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.linea-poema.iluminada {
+    color: #ffd700; /* Dorado brillante cuando hablas */
+    font-size: 18px; /* Se hace un poquito más grande */
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    transform: scale(1.05);
+}
+
+/* --- NOTIFICACIÓN DE CANCIÓN --- */
+#notificacion-cancion {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(31, 31, 42, 0.9);
+    color: #ffd700;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid #ff66b2; /* Toque fucsia */
+    font-size: 14px;
+    z-index: 1000;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    pointer-events: none; /* Para que no interfiera si hace clic ahí */
+    backdrop-filter: blur(4px);
+}
+
+.toast-oculto {
+    opacity: 0;
+    transform: translate(-50%, 50px) !important; /* Aparece desde un poco más abajo */
+}
+
+/* --- FASE 4: CUESTIONARIO FINAL --- */
+.cuestionario-contenedor {
+    background: rgba(31, 31, 42, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #ff66b2;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    max-width: 90%;
+    width: 500px;
+    max-height: 90vh; /* Para que no se salga de la pantalla */
+    overflow-y: auto; /* Permite hacer scroll si es muy largo */
+    backdrop-filter: blur(5px);
+    text-align: center;
+}
+
+.cuestionario-contenedor::-webkit-scrollbar {
+    width: 8px;
+}
+.cuestionario-contenedor::-webkit-scrollbar-thumb {
+    background: #ff66b2;
+    border-radius: 4px;
+}
+
+.cuestionario-contenedor h2 {
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+
+.cuestionario-contenedor p {
+    color: #d1d1e0;
+    margin-bottom: 25px;
+    font-size: 15px;
+}
+
+.formulario-final {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: left;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: #ffd700;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.form-group textarea, .form-group select {
+    width: 100%;
+    background: #14141c;
+    border: 1px solid #55556b;
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group select {
+    min-height: auto;
+}
+
+.form-group textarea:focus, .form-group select:focus {
+    outline: none;
+    border-color: #ff66b2;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #14141c;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #55556b;
+}
+
+.radio-group label {
+    color: #fff;
+    font-weight: normal;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.enviar-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 15px;
+}
+
+/* --- DECORACIONES TEMÁTICAS EN LOS BORDES --- */
+.decoracion-borde {
+    position: fixed;
+    max-width: 65px; /* Más pequeñas para que no estorben en celular */
+    pointer-events: none; /* Los clics las atraviesan */
+    z-index: 5; /* Debajo de la galería y la rocola */
+    filter: drop-shadow(0 0 5px rgba(255, 102, 178, 0.2));
+}
+
+.arriba-izq {
+    top: 20px;
+    left: 10px;
+    transform: rotate(-15deg);
+}
+
+.arriba-der {
+    top: 90px; /* Lo bajamos para que no choque con el vinilo */
+    right: 10px;
+    transform: rotate(15deg) scaleX(-1);
+}
+
+.abajo-izq {
+    bottom: 20px;
+    left: 10px;
+    transform: rotate(15deg);
+}
+
+.abajo-der {
+    bottom: 20px;
+    right: 10px;
+    transform: rotate(-15deg);
+}

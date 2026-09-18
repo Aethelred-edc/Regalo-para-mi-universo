@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi niña hermosa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="notificacion-cancion" class="toast-oculto">
+        🎵 Reproduciendo: <span id="nombre-cancion"></span>
+    </div>
+
+    <audio id="musica-fondo"></audio>
+    <div id="btn-rocola" class="rocola oculto">
+        <div class="centro-disco"></div>
+        <div class="brillo-disco"></div>
+    </div>
+
+    <!-- Login -->
+    <div id="pantalla-login" class="pantalla-activa">
+        <div class="tarjeta-invitacion">
+            <h1>Una invitación especial</h1>
+            <p>Para entrar a nuestra galería, ingresa nuestra fecha:</p>
+            <div class="input-container">
+                <input type="text" id="fecha-pass" placeholder="DD/MM/AAAA" inputmode="numeric" maxlength="10">
+            </div>
+            <p class="pista">Solo ingresa los números.</p>
+        </div>
+    </div>
+
+    <!-- Bienvenida -->
+    <div id="pantalla-bienvenida" class="oculto">
+        <div class="mensaje-bienvenida">
+            <h2>¡Feliz Cumpleaños, mi niña hermosa! 🎉</h2>
+            <p>He preparado este rincón especial solo para ti. Un viaje por nuestros recuerdos y todo lo que me haces sentir.</p>
+            <p class="nota-audio">🎧 Te recomiendo usar audífonos para una mejor experiencia.</p>
+            <button id="btn-comenzar" class="btn-nav">Comenzar el recorrido</button>
+        </div>
+    </div>
+
+    <!-- Galería -->
+    <div id="pantalla-galeria" class="oculto">
+        
+        <!-- ✨ NUEVAS DECORACIONES TEMÁTICAS ✨ -->
+        <!-- Asegúrate de tener estas imágenes PNG en la misma carpeta que este archivo -->
+        <img src="orquidea.png" class="decoracion-borde arriba-izq" alt="Orquídea">
+        <img src="lirio.png" class="decoracion-borde arriba-der" alt="Lirio">
+        <img src="kurumi.png" class="decoracion-borde abajo-izq" alt="Kurumi">
+
+        <div class="galeria-contenedor">
+            <div id="media-container"></div>
+            <div class="texto-container">
+                <p id="texto-narrativo"></p>
+            </div>
+            <div class="controles">
+                <button id="btn-anterior" class="btn-nav oculto">Anterior</button>
+                <button id="btn-siguiente" class="btn-nav">Siguiente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Poema (Preparado para el Karaoke) -->
+    <div id="modal-poema" class="modal oculto">
+        <div class="contenido-poema">
+            <h3 id="titulo-poema">Feliz 27</h3>
+            <div id="texto-poema"></div> <!-- Contenedor dinámico para las líneas de karaoke -->
+            <button id="btn-cerrar-poema">Guardar en el corazón</button>
+        </div>
+    </div>
+
+    <!-- Cuestionario Final -->
+    <div id="pantalla-cuestionario" class="oculto">
+        <div class="cuestionario-contenedor">
+            <h2>Llegamos al final del recorrido... 🥺</h2>
+            <p>Antes de irte, me encantaría saber qué sentiste. Sé sincera, mi amor.</p>
+            
+            <!-- AQUÍ ESTÁ TU LINK REAL DE FORMSPREE -->
+            <form action="https://formspree.io/f/xbgljrwn" method="POST" class="formulario-final">
+                
+                <div class="form-group">
+                    <label>¿Qué sentiste al ver todo esto?</label>
+                    <textarea name="sentimientos" required placeholder="Dime todo lo que pasó por tu mente y corazón..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Del 1 al 10, ¿qué tanto te gustó tu regalo?</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="calificacion" value="Me encantó (10)" required> 10/10 😍</label>
+                        <label><input type="radio" name="calificacion" value="Estuvo bonito (8-9)"> 8-9 😊</label>
+                        <label><input type="radio" name="calificacion" value="Pudo ser mejor (<7)"> Menos de 7 😅</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>¿Qué fue lo que MÁS te gustó de todo?</label>
+                    <textarea name="lo_que_mas_gusto" required placeholder="¿Las fotos? ¿Mi voz? ¿Las canciones? ¿Los sobres ocultos?..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>¿Hubo algo que no te gustara o que cambiarías?</label>
+                    <textarea name="lo_que_no_gusto" placeholder="Se vale ser honesta, quiero mejorar para el próximo regalo..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>¿Notaste los detalles? (Kurumi, orquídeas, música...) ¿Fueron correctos?</label>
+                    <textarea name="detalles_correctos" required placeholder="Dime si le atiné a tus gustos..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Pregunta seria: ¿Lo presumirías con tus amigas/familia? 🤭</label>
+                    <select name="lo_presumiria" required>
+                        <option value="" disabled selected>Selecciona una opción...</option>
+                        <option value="¡Obvio que sí!">¡Obvio que sí, a todo el mundo!</option>
+                        <option value="Solo a los más cercanos">Solo a mis amigxs más cercanxs</option>
+                        <option value="No, es algo muy nuestro">No, es un detalle muy íntimo y nuestro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Un último mensajito para mí...</label>
+                    <textarea name="mensaje_final" required placeholder="Te amo..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-nav enviar-btn">Enviar a mi corazón 💌</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
