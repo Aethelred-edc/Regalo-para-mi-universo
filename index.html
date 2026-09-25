@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#14081c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Para mi niña hermosa</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2226%22>💖</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Splash inicial: se oculta solo apenas carga todo -->
+    <div id="pantalla-splash">
+        <div class="splash-corazon">💖</div>
+    </div>
+
+    <!-- Partículas ambientales flotando de fondo (puramente decorativas) -->
+    <div class="particulas-fondo" aria-hidden="true">
+        <span class="particula p1">💖</span>
+        <span class="particula p2">✨</span>
+        <span class="particula p3">🌸</span>
+        <span class="particula p4">💫</span>
+        <span class="particula p5">💖</span>
+        <span class="particula p6">🌸</span>
+        <span class="particula p7">✨</span>
+        <span class="particula p8">💫</span>
+    </div>
+
+    <div id="notificacion-cancion" class="toast-oculto">
+        🎵 Reproduciendo: <span id="nombre-cancion"></span>
+    </div>
+
+    <audio id="musica-fondo"></audio>
+    <div id="btn-rocola" class="rocola oculto">
+        <div class="centro-disco"></div>
+        <div class="brillo-disco"></div>
+        <div class="ecualizador">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
+    <!-- Login -->
+    <div id="pantalla-login" class="pantalla-activa">
+        <div class="tarjeta-invitacion">
+            <h1>Una invitación especial</h1>
+            <p>Para entrar a nuestra galería, ingresa nuestra fecha:</p>
+            <div class="input-container">
+                <input type="text" id="fecha-pass" placeholder="DD/MM/AAAA" inputmode="numeric" maxlength="10">
+            </div>
+            <p class="pista">Solo ingresa los números.</p>
+            <p id="mensaje-error-login" class="mensaje-error oculto">Esa fecha no es... intenta de nuevo 💭</p>
+        </div>
+    </div>
+
+    <!-- Bienvenida -->
+    <div id="pantalla-bienvenida" class="oculto">
+        <div class="mensaje-bienvenida">
+            <h2>¡Feliz Cumpleaños, mi niña hermosa! 🎉</h2>
+            <p>He preparado este rincón especial solo para ti. Un viaje por nuestros recuerdos y todo lo que me haces sentir.</p>
+            <p class="nota-audio">🎧 Te recomiendo usar audífonos para una mejor experiencia.</p>
+            <button id="btn-comenzar" class="btn-nav">Comenzar el recorrido</button>
+        </div>
+    </div>
+
+    <!-- Galería -->
+    <div id="pantalla-galeria" class="oculto">
+
+        <div class="galeria-contenedor">
+
+            <!-- ✨ DECORACIONES: ahora van pegadas a las esquinas de LA FOTO,
+                 no de la pantalla, para que se vean bien en cualquier celular -->
+            <div class="media-wrapper">
+                <img src="orquidea.png" class="flor-esquina flor-arriba-izq" alt="" aria-hidden="true">
+                <div id="media-container"></div>
+                <img src="lirio.png" class="flor-esquina flor-abajo-izq" alt="" aria-hidden="true">
+            </div>
+
+            <div class="texto-container">
+                <p id="texto-narrativo"></p>
+            </div>
+            <div class="controles">
+                <button id="btn-anterior" class="btn-nav oculto">Anterior</button>
+                <div class="controles-derecha">
+                    <button id="btn-siguiente" class="btn-nav">Siguiente</button>
+                    <img src="kurumi.png" class="kurumi-mascota" alt="" aria-hidden="true">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Poema (Preparado para el Karaoke) -->
+    <div id="modal-poema" class="modal oculto">
+        <div class="contenido-poema">
+            <h3 id="titulo-poema">Feliz 27</h3>
+            <div id="texto-poema"></div> <!-- Contenedor dinámico para las líneas de karaoke -->
+            <button id="btn-cerrar-poema">Guardar en el corazón</button>
+        </div>
+    </div>
+
+    <!-- Cuestionario Final (ahora en pasos, una pregunta a la vez) -->
+    <div id="pantalla-cuestionario" class="oculto">
+        <div class="cuestionario-contenedor">
+            <h2>Llegamos al final del recorrido... 🥺</h2>
+            <p>Antes de irte, me encantaría saber qué sentiste. Sé sincera, mi amor.</p>
+
+            <div class="progreso-cuestionario">
+                <span class="progreso-texto">Pregunta <span id="paso-actual-num">1</span> de <span id="paso-total-num">7</span></span>
+                <div class="progreso-barra-cuestionario"><div id="progreso-cuestionario-relleno" class="progreso-barra-relleno"></div></div>
+            </div>
+
+            <!-- AQUÍ ESTÁ TU LINK REAL DE FORMSPREE -->
+            <form action="https://formspree.io/f/xbgljrwn" method="POST" class="formulario-final">
+
+                <div class="paso-pregunta">
+                    <div class="form-group">
+                        <label for="campo-sentimientos">¿Qué sentiste al ver todo esto?</label>
+                        <textarea id="campo-sentimientos" name="sentimientos" required placeholder="Dime todo lo que pasó por tu mente y corazón..."></textarea>
+                    </div>
+                </div>
+
+                <div class="paso-pregunta">
+                    <div class="form-group">
+                        <span class="label-grupo">Del 1 al 10, ¿qué tanto te gustó tu regalo?</span>
+                        <div class="radio-group">
+                            <label><input type="radio" name="calificacion" value="Me encantó (10)" required> 10/10 😍</label>
+                            <label><input type="radio" name="calificacion" value="Estuvo bonito (8-9)"> 8-9 😊</label>
+                            <label><input type="radio" name="calificacion" value="Pudo ser mejor (<7)"> Menos de 7 😅</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="paso-pregunta">
+                    <div class="form-group">
+                        <label for="campo-mas-gusto">¿Qué fue lo que MÁS te gustó de todo?</label>
+                        <textarea id="campo-mas-gusto" name="lo_que_mas_gusto" required placeholder="¿Las fotos? ¿Mi voz? ¿Las canciones? ¿Los sobres ocultos?..."></textarea>
+                    </div>
+                </div>
+
+                <div class="paso-pregunta">
+                    <div class="form-group">
+                        <label for="campo-no-gusto">¿Hubo algo que no te gustara o que cambiarías?</label>
+                        <textarea id="campo-no-gusto" name="lo_que_no_gusto" placeholder="Se vale ser honesta, quiero mejorar para el próximo regalo..."></textarea>
+                    </div>
+                </div>
+
+                <div class="paso-pregunta">
+                    <div class="form-group">
+                        <label for="campo-detalles">¿Notaste los detalles? (Kurumi, orquídeas, música...) ¿Fueron correctos?</label>
+                        <textarea id="campo-detalles" name="detalles_correctos" required placeholder="Dime si le atiné a tus gustos..."></textarea>
+                    </div>
+                </div>
+
+                <div class="paso-pregunta">
+                    <div class="form-group">
+                        <label for="campo-presumir">Pregunta seria: ¿Lo presumirías con tus amigas/familia? 🤭</label>
+                        <select id="campo-presumir" name="lo_presumiria" required>
+                            <option value="" disabled selected>Selecciona una opción...</option>
+                            <option value="¡Obvio que sí!">¡Obvio que sí, a todo el mundo!</option>
+                            <option value="Solo a los más cercanos">Solo a mis amigxs más cercanxs</option>
+                            <option value="No, es algo muy nuestro">No, es un detalle muy íntimo y nuestro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="paso-pregunta">
+                    <div class="form-group">
+                        <label for="campo-mensaje-final">Un último mensajito para mí...</label>
+                        <textarea id="campo-mensaje-final" name="mensaje_final" required placeholder="Te amo..."></textarea>
+                    </div>
+                </div>
+
+                <div class="nav-pasos">
+                    <button type="button" id="btn-paso-atras" class="btn-nav btn-secundario oculto">← Atrás</button>
+                    <button type="button" id="btn-paso-siguiente" class="btn-nav">Siguiente →</button>
+                    <button type="submit" id="btn-enviar-final" class="btn-nav enviar-btn oculto">Enviar a mi corazón 💌</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pantalla de agradecimiento final -->
+    <div id="pantalla-gracias" class="oculto">
+        <div class="mensaje-bienvenida mensaje-gracias">
+            <h2>💌 ¡Gracias, mi amor!</h2>
+            <p>Tus palabras llegaron directo a mi corazón. Espero que este pequeño recorrido te haya hecho sonreír tanto como a mí escribirlo.</p>
+            <p class="nota-audio">Feliz cumpleaños, una y mil veces más. Te amo. 🎂💕</p>
+
+            <!-- Solo aparece si no había internet para confirmar el envío -->
+            <div id="respaldo-respuestas" class="oculto respaldo-respuestas">
+                <p class="respaldo-aviso">⚠️ No logré confirmar el envío por internet. Para que no se pierda nada, copia tus respuestas y mándamelas por donde prefieras:</p>
+                <textarea id="respaldo-texto" readonly></textarea>
+                <button type="button" id="btn-copiar-respaldo" class="btn-nav btn-secundario">Copiar respuestas</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="contenido.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
