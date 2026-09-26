@@ -1,0 +1,1109 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Quicksand', 'Georgia', serif;
+    -webkit-tap-highlight-color: transparent; /* sin el recuadro gris al tocar en Android */
+}
+
+h1, h2, h3, #titulo-poema {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    letter-spacing: 0.3px;
+}
+
+html {
+    height: 100%;
+    overscroll-behavior: none; /* sin rebote de "jalar para refrescar" */
+}
+
+body {
+    /* Fondo animado estilo romántico/Kurumi/Burton */
+    background: linear-gradient(135deg, #14081c, #2a1124, #1a1a24, #0d1b2a);
+    background-size: 400% 400%;
+    animation: gradienteFondo 15s ease infinite;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    height: 100dvh; /* altura real en celular, sin saltos por la barra del navegador */
+    overflow: hidden;
+    overscroll-behavior: none;
+    position: relative;
+    /* Respeta el notch / la isla dinámica / la barra de gestos */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* --- MEJORAS VISUALES: FONDO, BIENVENIDA Y NUEVO BRILLITO --- */
+
+/* Estrellas/Partículas mágicas de fondo */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #ffd700, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 40px, #ff66b2, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 120px, #ffffff, rgba(0,0,0,0));
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    animation: estrellasFlotantes 20s linear infinite;
+    opacity: 0.4;
+    z-index: -1;
+}
+
+@keyframes estrellasFlotantes {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-200px); }
+}
+
+@keyframes gradienteFondo {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- SPLASH INICIAL --- */
+#pantalla-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #14081c;
+    transition: opacity 0.5s ease;
+}
+
+#pantalla-splash.splash-oculto {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.splash-corazon {
+    font-size: 52px;
+    animation: latirSplash 1s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(255, 102, 178, 0.6));
+}
+
+@keyframes latirSplash {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+}
+
+/* --- PARTÍCULAS AMBIENTALES (corazones/estrellas flotando) --- */
+.particulas-fondo {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.particula {
+    position: absolute;
+    bottom: -10%;
+    font-size: 18px;
+    opacity: 0;
+    animation-name: flotarParticula;
+    animation-timing-function: ease-in;
+    animation-iteration-count: infinite;
+    filter: drop-shadow(0 0 4px rgba(255, 102, 178, 0.3));
+}
+
+@keyframes flotarParticula {
+    0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.7; }
+    90%  { opacity: 0.5; }
+    100% { transform: translate(var(--deriva, 40px), -115vh) rotate(25deg); opacity: 0; }
+}
+
+.p1 { left: 8%;  font-size: 16px; animation-duration: 16s; animation-delay: 0s;  --deriva: 30px; }
+.p2 { left: 22%; font-size: 14px; animation-duration: 13s; animation-delay: 3s;  --deriva: -25px; }
+.p3 { left: 40%; font-size: 20px; animation-duration: 19s; animation-delay: 6s;  --deriva: 20px; }
+.p4 { left: 58%; font-size: 15px; animation-duration: 15s; animation-delay: 1s;  --deriva: -35px; }
+.p5 { left: 72%; font-size: 18px; animation-duration: 17s; animation-delay: 8s;  --deriva: 15px; }
+.p6 { left: 85%; font-size: 14px; animation-duration: 14s; animation-delay: 4s;  --deriva: -20px; }
+.p7 { left: 95%; font-size: 17px; animation-duration: 18s; animation-delay: 10s; --deriva: 25px; }
+.p8 { left: 12%; font-size: 13px; animation-duration: 12s; animation-delay: 7s;  --deriva: -15px; }
+
+@media (prefers-reduced-motion: reduce) {
+    .particula, body::before, .rocola.activa { animation: none !important; }
+}
+
+/* Pantallas */
+.pantalla-activa {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.oculto {
+    display: none !important;
+    opacity: 0;
+}
+
+/* Diseño de la tarjeta */
+.tarjeta-invitacion {
+    position: relative;
+    background: linear-gradient(145deg, rgba(42,42,53,0.9), rgba(31,31,42,0.9));
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    animation: aparecerTarjeta 0.7s ease both;
+}
+.tarjeta-invitacion::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 1px;
+    background: linear-gradient(135deg, #ffd700, #ff66b2 60%, transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+@keyframes aparecerTarjeta {
+    from { opacity: 0; transform: translateY(15px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.tarjeta-invitacion h1 {
+    font-size: 24px;
+    color: #ffd700; /* Dorado cálido */
+    margin-bottom: 15px;
+}
+
+.tarjeta-invitacion p {
+    font-size: 16px;
+    color: #d1d1e0;
+    margin-bottom: 25px;
+}
+
+/* Input de la contraseña */
+.input-container input {
+    width: 100%;
+    padding: 15px;
+    font-size: max(22px, 16px); /* nunca baja de 16px: evita el zoom automático de iOS al tocar */
+    text-align: center;
+    letter-spacing: 2px;
+    border: 2px solid #55556b;
+    border-radius: 10px;
+    background-color: #14141c;
+    color: #ffd700;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+    touch-action: manipulation;
+}
+
+.input-container input:focus {
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.15);
+}
+
+.input-container input:focus {
+    border-color: #ffd700;
+}
+
+.pista {
+    margin-top: 15px;
+    font-size: 13px !important;
+    color: #888 !important;
+    font-style: italic;
+}
+
+.mensaje-error {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #ff6b8b;
+    min-height: 16px;
+    transition: opacity 0.3s ease;
+}
+.mensaje-error.oculto { opacity: 0; visibility: hidden; }
+
+.tarjeta-invitacion.agitar {
+    animation: agitarTarjeta 0.4s ease;
+}
+
+@keyframes agitarTarjeta {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(7px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(3px); }
+}
+
+/* --- ESTILOS DE LA FASE 2: GALERÍA --- */
+.galeria-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
+    padding: 20px;
+    justify-content: center;
+}
+
+.media-wrapper {
+    padding: 3px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #ffd700, #ff66b2 55%, #3d3d4e);
+}
+
+#media-container {
+    width: 100%;
+    height: 50vh; /* Ocupa la mitad de la pantalla */
+    background-color: #0f0f15;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 0 40px rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    touch-action: pan-y; /* deja el swipe horizontal libre para el carrusel */
+    user-select: none;
+    contain: layout paint; /* menos trabajo de repintado para el navegador */
+    transition: opacity 0.12s ease; /* fundido entre escenas */
+}
+
+/* Brillo tipo "shimmer" mientras carga la foto/video (efecto app profesional) */
+#media-container.cargando::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.10) 50%, transparent 70%);
+    background-size: 200% 100%;
+    animation: shimmerCarga 1.3s infinite;
+    z-index: 25;
+    pointer-events: none;
+}
+
+@keyframes shimmerCarga {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* --- BARRA DE PROGRESO ESTILO "HISTORIAS" --- */
+#barra-progreso {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    max-width: 500px;
+    padding: 0 4px;
+    margin-bottom: 12px;
+}
+
+.segmento-progreso {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+}
+
+.segmento-relleno {
+    height: 100%;
+    width: 0%;
+    background: #ffd700;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.segmento-progreso.completo .segmento-relleno { width: 100%; }
+.segmento-progreso.actual .segmento-relleno { width: 100%; background: #ff66b2; }
+
+#media-container img, #media-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la foto llene el espacio sin deformarse */
+    transition: opacity 0.5s ease;
+}
+
+/* El carrusel ahora se navega deslizando (swipe), no con flechas.
+   Estos puntos indican en qué foto vas; son solo visuales. */
+.carrusel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.carrusel-dots .punto {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.carrusel-dots .punto.activo {
+    background: #ffd700;
+    transform: scale(1.3);
+}
+
+/* Pequeña pista de "desliza" que aparece un momento en escenas de carrusel */
+.pista-swipe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 13px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 6px 14px;
+    border-radius: 20px;
+    z-index: 9;
+    pointer-events: none;
+    animation: pistaSwipeFade 2.2s ease forwards;
+}
+
+@keyframes pistaSwipeFade {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    75% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.texto-container {
+    width: 100%;
+    min-height: 120px;
+    background: linear-gradient(145deg, #2a2a35, #1f1f2a);
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #3d3d4e;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+#texto-narrativo {
+    font-size: 16px;
+    color: #e0e0eb;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.controles {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-nav {
+    position: relative;
+    overflow: hidden;
+    touch-action: manipulation;
+    min-height: 44px;
+    padding: 13px 28px;
+    background: linear-gradient(135deg, #ffe066, #ffd700 45%, #ffb347);
+    color: #1a1a24;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Quicksand', sans-serif;
+    box-shadow: 0 4px 14px rgba(255, 215, 0, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+.btn-nav::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -75%;
+    width: 50%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.5s ease;
+}
+.btn-nav:hover::before { left: 130%; }
+.btn-nav:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 215, 0, 0.5);
+}
+.btn-nav:active { transform: scale(0.95); }
+.btn-nav.oculto { visibility: hidden; }
+.btn-nav:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+.btn-secundario {
+    background: transparent;
+    color: #ffd700;
+    border: 2px solid #ffd700;
+    box-shadow: none;
+}
+.btn-secundario:hover {
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+}
+
+
+/* --- ESTILOS FASE 3: ROCOLA DE VINILO --- */
+.rocola {
+    position: fixed;
+    top: calc(20px + env(safe-area-inset-top));
+    right: calc(20px + env(safe-area-inset-right));
+    width: 50px;
+    height: 50px;
+    touch-action: manipulation;
+    border-radius: 50%;
+    /* Textura de surcos de vinilo */
+    background: repeating-radial-gradient(
+        #111,
+        #111 2px,
+        #222 3px,
+        #222 4px
+    );
+    border: 2px solid #3d3d4e;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+/* El sticker central del disco (puedes cambiar el color) */
+.centro-disco {
+    width: 18px;
+    height: 18px;
+    background: #ff66b2; /* Tono Kurumi/Romántico */
+    border-radius: 50%;
+    border: 3px solid #111; /* El agujero del disco */
+}
+
+/* Un pequeño brillo para darle efecto 3D al vinilo */
+.brillo-disco {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.1) 100%);
+    pointer-events: none;
+}
+
+/* Solo el disco interior gira; el ecualizador se queda quieto */
+.disco-interior {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rocola.activa {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8), 0 0 16px rgba(255, 102, 178, 0.55);
+}
+
+.rocola.activa .disco-interior {
+    animation: girarVinilo 3s linear infinite;
+}
+
+@keyframes girarVinilo {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Minicualizador: 3 barritas que "bailan" mientras suena la música */
+.ecualizador {
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.rocola.activa .ecualizador { opacity: 1; }
+
+.ecualizador span {
+    width: 3px;
+    background: #ffd700;
+    border-radius: 2px;
+    animation: rebotarBarra 0.9s ease-in-out infinite;
+}
+.ecualizador span:nth-child(1) { animation-delay: 0s; }
+.ecualizador span:nth-child(2) { animation-delay: 0.2s; }
+.ecualizador span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes rebotarBarra {
+    0%, 100% { height: 3px; }
+    50% { height: 10px; }
+}
+
+/* Pantalla de Bienvenida */
+.mensaje-bienvenida {
+    background: rgba(31, 31, 42, 0.85);
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid #ff66b2; /* Toque fucsia sutil */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 40px rgba(255, 102, 178, 0.15);
+    max-width: 90%;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    animation: aparecerTarjeta 0.7s ease both;
+}
+
+.mensaje-gracias h2 { margin-bottom: 16px; }
+
+.respaldo-respuestas {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    text-align: left;
+}
+
+.respaldo-aviso {
+    font-size: 13px !important;
+    color: #ff99cc !important;
+    margin-bottom: 10px !important;
+}
+
+.respaldo-respuestas textarea {
+    width: 100%;
+    min-height: 120px;
+    background: #14141c;
+    border: 1px solid #55556b;
+    border-radius: 10px;
+    color: #fff;
+    padding: 10px;
+    font-size: 13px;
+    margin-bottom: 10px;
+    resize: vertical;
+}
+
+.mensaje-bienvenida h2 {
+    color: #ffd700;
+    margin-bottom: 20px;
+}
+
+.mensaje-bienvenida p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.nota-audio {
+    font-size: 14px !important;
+    color: #ff99cc !important;
+    font-style: italic;
+    margin-bottom: 30px !important;
+}
+
+/* --- EASTER EGGS --- */
+
+/* NUEVO BRILLITO (Más misterioso y elegante) */
+.brillito {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border-radius: 50%;
+    /* Un resplandor difuminado, sin bordes duros */
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.5), 0 0 30px 10px rgba(255, 102, 178, 0.3);
+    animation: latidoMisterioso 2s infinite ease-in-out;
+    cursor: pointer;
+    z-index: 20;
+}
+
+/* El núcleo del brillo */
+.brillito::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #fff;
+}
+
+@keyframes latidoMisterioso {
+    0%, 100% { transform: scale(0.8); opacity: 0.4; }
+    50% { transform: scale(1.2); opacity: 1; }
+}
+
+/* --- ESTILOS DEL SOBRE (EASTER EGG 2) --- */
+.sobre-misterioso {
+    position: absolute;
+    width: 36px;  /* un poco más grande: mejor objetivo táctil en celular */
+    height: 36px;
+    padding: 6px; /* área de toque extra sin agrandar el ícono visualmente */
+    box-sizing: content-box;
+    cursor: pointer;
+    z-index: 20;
+    /* Brillo mucho más sutil y pegado al borde */
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4));
+    animation: flotarSobre 3s ease-in-out infinite;
+    transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.sobre-misterioso:hover,
+.sobre-misterioso:active {
+    transform: scale(1.1) translateY(-5px);
+    /* El brillo al pasar el dedo también es más suave */
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6)); 
+}
+
+/* Una vez que lo abrió, deja de insistir con el pulso */
+.sobre-misterioso.abierto {
+    animation: none;
+    opacity: 0.55;
+}
+
+@keyframes flotarSobre {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); } 
+}
+
+/* Modal del Poema */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+.modal:not(.oculto) {
+    opacity: 1;
+}
+.contenido-poema {
+    position: relative;
+    background: #1f1f2a;
+    padding: 30px;
+    border-radius: 15px;
+    border: 2px solid #ff66b2; /* Toque fucsia/Kurumi */
+    text-align: center;
+    max-width: 85%;
+    box-shadow: 0 10px 30px rgba(255, 102, 178, 0.3);
+}
+.contenido-poema h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+.contenido-poema p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    white-space: pre-wrap; /* Respeta los saltos de línea de tu poema */
+}
+#btn-cerrar-poema {
+    padding: 10px 20px;
+    background: #ff66b2;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer; /* Añadido para mejor usabilidad */
+}
+
+/* --- EFECTO KARAOKE PARA EL POEMA --- */
+.linea-poema {
+    color: #888; /* Color apagado por defecto */
+    font-size: 16px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.linea-poema.iluminada {
+    color: #ffd700; /* Dorado brillante cuando hablas */
+    font-size: 18px; /* Se hace un poquito más grande */
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    transform: scale(1.05);
+}
+
+/* --- CORAZÓN AL DOBLE-TOQUE SOBRE LA FOTO (estilo "me gusta") --- */
+.corazon-flotante {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    z-index: 30;
+    animation: estallarCorazon 0.9s ease-out forwards;
+}
+
+@keyframes estallarCorazon {
+    0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.4); }
+    35%  { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -60px))) scale(1.3);
+    }
+}
+
+/* --- CONFETI DE CORAZONES (pantalla de agradecimiento) --- */
+.corazon-confeti {
+    position: fixed;
+    top: -8%;
+    pointer-events: none;
+    z-index: 500;
+    animation-name: caerConfeti;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+}
+
+@keyframes caerConfeti {
+    to { transform: translateY(115vh) rotate(360deg); opacity: 0.15; }
+}
+
+/* --- BOTÓN "INSTALAR COMO APP" --- */
+#btn-instalar-app {
+    position: fixed;
+    left: 50%;
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    z-index: 900;
+    padding: 10px 18px;
+    font-size: 13px;
+    border-radius: 20px;
+    border: none;
+    background: linear-gradient(135deg, #ffe066, #ffd700 45%, #ffb347);
+    color: #1a1a24;
+    font-weight: 700;
+    font-family: 'Quicksand', sans-serif;
+    box-shadow: 0 6px 18px rgba(255, 215, 0, 0.4);
+    cursor: pointer;
+    animation: aparecerTarjeta 0.5s ease both;
+}
+
+/* --- BANNER "AGREGAR A INICIO" (solo iPhone/iPad) --- */
+.banner-ios {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(20, 20, 28, 0.95);
+    border: 1px solid #ffd700;
+    border-radius: 16px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    animation: aparecerTarjeta 0.5s ease both;
+}
+
+.banner-ios strong { color: #ffd700; }
+
+.banner-ios button {
+    background: none;
+    border: none;
+    color: #d1d1e0;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+/* --- NOTIFICACIÓN DE CANCIÓN --- */
+#notificacion-cancion {
+    position: fixed;
+    bottom: calc(30px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(31, 31, 42, 0.9);
+    color: #ffd700;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid #ff66b2; /* Toque fucsia */
+    font-size: 14px;
+    z-index: 1000;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    pointer-events: none; /* Para que no interfiera si hace clic ahí */
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.toast-oculto {
+    opacity: 0;
+    transform: translate(-50%, 50px) !important; /* Aparece desde un poco más abajo */
+}
+
+/* --- FASE 4: CUESTIONARIO FINAL --- */
+.cuestionario-contenedor {
+    background: rgba(31, 31, 42, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #ff66b2;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    max-width: 90%;
+    width: 500px;
+    max-height: 90vh; /* Para que no se salga de la pantalla */
+    overflow-y: auto; /* Permite hacer scroll si es muy largo */
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    text-align: center;
+}
+
+.cuestionario-contenedor::-webkit-scrollbar {
+    width: 8px;
+}
+.cuestionario-contenedor::-webkit-scrollbar-thumb {
+    background: #ff66b2;
+    border-radius: 4px;
+}
+
+.cuestionario-contenedor h2 {
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+
+.cuestionario-contenedor p {
+    color: #d1d1e0;
+    margin-bottom: 25px;
+    font-size: 15px;
+}
+
+.formulario-final {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: left;
+}
+
+/* --- BARRA DE PROGRESO DEL CUESTIONARIO --- */
+.progreso-cuestionario {
+    margin-bottom: 20px;
+}
+
+.progreso-texto {
+    display: block;
+    font-size: 12px;
+    color: #ff99cc;
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.progreso-barra-cuestionario {
+    width: 100%;
+    height: 5px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progreso-barra-relleno {
+    height: 100%;
+    width: 14.28%;
+    background: linear-gradient(90deg, #ff66b2, #ffd700);
+    border-radius: 3px;
+    transition: width 0.35s ease;
+}
+
+/* --- PASOS DEL CUESTIONARIO (una pregunta a la vez) --- */
+.paso-pregunta {
+    animation: entrarPaso 0.35s ease both;
+}
+
+.paso-pregunta.paso-oculto {
+    display: none;
+}
+
+@keyframes entrarPaso {
+    from { opacity: 0; transform: translateX(12px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.nav-pasos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.nav-pasos .btn-nav {
+    flex: 1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label,
+.form-group .label-grupo {
+    color: #ffd700;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.form-group textarea, .form-group select {
+    width: 100%;
+    background: #14141c;
+    border: 1px solid #55556b;
+    border-radius: 10px;
+    color: #fff;
+    padding: 12px;
+    font-family: inherit;
+    font-size: max(1em, 16px); /* evita el zoom automático de iOS */
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group select {
+    min-height: auto;
+}
+
+.form-group textarea:focus, .form-group select:focus {
+    outline: none;
+    border-color: #ff66b2;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #14141c;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #55556b;
+}
+
+.radio-group label {
+    color: #fff;
+    font-weight: normal;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 4px;
+    min-height: 44px; /* objetivo táctil cómodo en celular */
+}
+
+.radio-group input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #ff66b2;
+    flex-shrink: 0;
+}
+
+.enviar-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 15px;
+}
+
+/* --- BOTÓN "TOCA PARA ESCUCHAR" (respaldo si Safari/iOS bloquea el autoplay) --- */
+.btn-reproducir-audio {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 35;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(20, 20, 28, 0.85);
+    color: #ffd700;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Quicksand', sans-serif;
+    border: 1px solid #ffd700;
+    cursor: pointer;
+    animation: latirSplash 1.4s ease-in-out infinite;
+}
+
+/* --- AVISO DE ARCHIVO FALTANTE (para ir probando mientras subes fotos/videos) --- */
+.aviso-archivo-faltante {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    color: #ff99cc;
+    font-size: 14px;
+    font-style: italic;
+    background: repeating-linear-gradient(
+        45deg,
+        #1a1a24,
+        #1a1a24 10px,
+        #20202c 10px,
+        #20202c 20px
+    );
+}
+
+/* --- DECORACIONES: ahora pegadas a las esquinas de LA FOTO --- */
+/* Antes estaban "fixed" a la pantalla, por eso en celular se veían
+   desubicadas o encimadas. Ahora viven dentro de .media-wrapper y se
+   posicionan relativas a la propia foto/video, así siempre quedan
+   exactamente en su esquina sin importar el tamaño de pantalla. */
+
+.media-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.flor-esquina {
+    position: absolute;
+    width: clamp(54px, 16vw, 88px);
+    height: auto;
+    pointer-events: none; /* Los clics las atraviesan */
+    z-index: 6;
+    filter: drop-shadow(0 0 5px rgba(255, 102, 178, 0.35));
+}
+
+.flor-arriba-izq {
+    top: -10px;
+    left: -10px;
+    transform: rotate(-15deg);
+}
+
+.flor-abajo-izq {
+    bottom: -10px;
+    left: -10px;
+    transform: rotate(15deg);
+}
+
+/* Kurumi ahora acompaña al botón "Siguiente" en vez de flotar sobre la página */
+.controles-derecha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.kurumi-mascota {
+    width: clamp(48px, 14vw, 68px);
+    height: auto;
+    pointer-events: none;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5));
+}
